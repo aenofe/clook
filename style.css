@@ -1,0 +1,1165 @@
+/* ============================================
+   1. RESET & VARIABLES
+   These custom properties (--variable-name) let us
+   reuse colors everywhere instead of retyping hex codes.
+============================================ */
+:root {
+  --color-bg: #EFEAE1;        /* parchment page background */
+  --color-surface: #FBF8F3;   /* card background, slightly lighter */
+  --color-ink: #1E2A3A;       /* main text color, deep navy */
+  --color-ink-soft: #5B6B7C;  /* secondary/muted text */
+  --color-accent: #E8A33D;    /* amber - buttons, highlights */
+  --color-accent-dark: #C9822A;
+  --color-teal: #2F6F6B;      /* teal - links, topic tags */
+  --color-border: #DCD3C4;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  box-sizing: border-box; /* padding/border no longer add to element width */
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  line-height: 1.5;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* ============================================
+   1b. DARK THEME
+   Same variable names as :root above, just different values.
+   Everything in this file uses var(--color-...) instead of hardcoded
+   hex codes, so switching this one attribute re-themes the whole site.
+============================================ */
+[data-theme="dark"] {
+  --color-bg: #1B2430;
+  --color-surface: #232D3B;
+  --color-ink: #EDEBE3;
+  --color-ink-soft: #9FB0C0;
+  --color-accent: #E8A33D;
+  --color-accent-dark: #F0B65A;
+  --color-teal: #4FA39D;
+  --color-border: #333F4F;
+}
+
+/* A few surfaces that change often enough to feel abrupt without a transition */
+.navbar,
+.sidebar,
+.post-card,
+.auth-card,
+.search-dropdown,
+.comment-item,
+.profile-header,
+.comment-form-wrapper textarea,
+.form-group input,
+.form-group select,
+.form-group textarea {
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+/* ============================================
+   2. NAVBAR
+============================================ */
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 32px;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.navbar-left a {
+  color: inherit; /* stops the browser's default blue/purple link color from
+                     overriding the theme - now it pulls from the navbar
+                     (which follows --color-ink) instead */
+  text-decoration: none;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: inherit;
+}
+
+.logo-accent {
+  color: #F4C430; /* bright yellow, for the "C" in Clook */
+}
+
+.navbar-search {
+  flex: 1; /* takes up remaining space between logo and buttons */
+  max-width: 480px;
+  position: relative; /* so the dropdown below can position itself against THIS box */
+}
+
+.navbar-search input {
+  width: 100%;
+  padding: 9px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+}
+
+.navbar-search input:focus {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 1px;
+}
+
+/* Dropdown of matching topics/users that appears under the search box */
+.search-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(30, 42, 58, 0.12);
+  z-index: 20;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.search-dropdown.visible {
+  display: block;
+}
+
+.search-dropdown-section {
+  margin-bottom: 6px;
+}
+
+.search-dropdown-heading {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-ink-soft);
+  padding: 4px 8px;
+}
+
+.search-result-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-ink);
+}
+
+.search-result-item:hover {
+  background-color: rgba(47, 111, 107, 0.08);
+}
+
+.search-result-topic-btn {
+  font-family: var(--font-mono);
+  color: var(--color-teal);
+}
+
+.navbar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-right {
+  display: flex;
+  gap: 10px;
+}
+
+.theme-toggle-btn {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* ============================================
+   3. BUTTONS
+   One .btn base class + modifier classes
+   (btn-primary, btn-ghost, etc.) that change color.
+============================================ */
+.btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 9px 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  text-decoration: none; /* in case .btn is used on an <a> tag */
+  text-align: center;
+  transition: transform 0.08s ease, background-color 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background-color: var(--color-accent);
+  color: var(--color-ink);
+}
+.btn-primary:hover {
+  background-color: var(--color-accent-dark);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-ink);
+}
+.btn-ghost:hover {
+  background-color: var(--color-border);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-ink-soft);
+}
+.btn-outline:hover {
+  border-color: var(--color-teal);
+  color: var(--color-teal);
+}
+
+.btn-full {
+  width: 100%;
+  margin-top: 16px;
+}
+
+/* ============================================
+   4. LAYOUT (sidebar + feed side by side)
+============================================ */
+.layout {
+  display: flex;
+  max-width: 1000px;
+  margin: 0 auto;
+  gap: 28px;
+  padding: 28px 20px;
+  align-items: flex-start;
+}
+
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 18px;
+  position: sticky;
+  top: 80px;
+}
+
+.sidebar-heading {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-soft);
+  margin-bottom: 12px;
+}
+
+.topic-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feed {
+  flex: 1;
+  min-width: 0; /* prevents flex children from overflowing */
+}
+
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.feed-header h1 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+}
+
+/* ============================================
+   5. TOPIC TAGS  (the signature element)
+   Styled like little code/hashtag chips.
+============================================ */
+.topic-tag {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--color-teal);
+  text-decoration: none;
+  background-color: rgba(47, 111, 107, 0.08);
+  padding: 4px 9px;
+  border-radius: 5px;
+  display: inline-block;
+  transition: background-color 0.15s ease;
+}
+
+.topic-tag:hover {
+  background-color: rgba(47, 111, 107, 0.16);
+}
+
+.topic-tag--active {
+  background-color: var(--color-teal);
+  color: white;
+}
+
+/* ============================================
+   6. POST CARDS
+============================================ */
+.post-card {
+  display: flex;
+  gap: 16px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.post-votes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding-top: 2px;
+}
+
+.vote-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--color-ink-soft);
+  line-height: 1;
+  padding: 4px;
+}
+.vote-btn:hover {
+  color: var(--color-accent-dark);
+}
+
+.vote-count {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.post-body {
+  flex: 1;
+}
+
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.meta-text {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--color-ink-soft);
+}
+
+.username {
+  color: var(--color-ink);
+  text-decoration: none;
+}
+.username:hover {
+  color: var(--color-teal);
+}
+
+/* ============================================
+   11. PROFILE PAGE
+============================================ */
+.profile-header {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.profile-username {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+
+.profile-joined {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--color-ink-soft);
+  margin-bottom: 16px;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 28px;
+}
+
+.profile-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--color-teal);
+}
+
+.profile-stat-label {
+  font-size: 0.75rem;
+  color: var(--color-ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Own-profile "Posts" / "Archived" tab switcher, sitting where a plain
+   heading normally would (see profile.js renderTabs()) */
+.save-btn--active {
+  color: var(--color-accent-dark);
+  font-weight: 600;
+}
+
+.profile-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.profile-tab-btn {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-ink-soft);
+  padding: 2px 0;
+  border-bottom: 2px solid transparent;
+}
+
+.profile-tab-btn:hover {
+  color: var(--color-ink);
+}
+
+.profile-tab-btn--active {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-teal);
+}
+
+/* Shown at the top of an archived post - only its author ever sees this */
+.archived-banner {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--color-accent-dark);
+  background-color: rgba(232, 163, 61, 0.12);
+  padding: 6px 10px;
+  border-radius: 5px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.archive-toggle-btn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  padding: 4px 10px;
+}
+
+.post-title-link {
+  text-decoration: none;
+  color: inherit;
+}
+.post-title-link:hover .post-title {
+  color: var(--color-teal);
+}
+
+.post-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+
+.post-excerpt {
+  color: var(--color-ink-soft);
+  font-size: 0.92rem;
+  margin-bottom: 12px;
+}
+
+.post-actions {
+  display: flex;
+  gap: 18px;
+}
+
+.post-action {
+  font-size: 0.82rem;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+}
+.post-action:hover {
+  color: var(--color-teal);
+}
+
+/* .save-btn is a real <button>, so it inherits the browser's default button
+   chrome (grey background, border, padding, system font) unless we strip it
+   out ourselves - .post-action alone only sets font-size/color, not those. */
+.save-btn {
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 0;
+}
+
+/* ============================================
+   7. AUTH PAGES (signup.html / login.html)
+============================================ */
+.auth-wrapper {
+  min-height: calc(100vh - 65px); /* accounts for the navbar now sitting above this on login/signup */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 32px;
+}
+
+.auth-logo {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin-bottom: 6px;
+  display: block;
+  text-align: center;
+}
+
+.auth-subtitle {
+  text-align: center;
+  color: var(--color-ink-soft);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+}
+
+.form-group textarea {
+  resize: vertical;
+  font-family: var(--font-body);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 1px;
+}
+
+.auth-error {
+  background-color: rgba(200, 60, 60, 0.1);
+  color: #a83a3a;
+  font-size: 0.85rem;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  display: none; /* JS shows this only when there's an error */
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 0.88rem;
+  color: var(--color-ink-soft);
+}
+
+.auth-footer a {
+  color: var(--color-teal);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* navbar user display, shown once logged in */
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+}
+
+.feed-loading,
+.feed-empty {
+  color: var(--color-ink-soft);
+  font-size: 0.92rem;
+  padding: 24px;
+  text-align: center;
+}
+
+/* ============================================
+   9. POST DETAIL PAGE + COMMENTS
+============================================ */
+.post-detail {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 22px 56px 22px 22px;
+  margin-bottom: 24px;
+  position: relative; /* anchors .post-detail-share-btn to this card's corner */
+}
+
+.post-detail-share-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.post-detail .post-title {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+}
+
+.post-detail .post-excerpt {
+  font-size: 1rem;
+  white-space: pre-wrap; /* keeps line breaks the user typed */
+}
+
+.comment-form {
+  margin-bottom: 24px;
+}
+
+.comment-form-wrapper {
+  margin-bottom: 28px;
+}
+
+.comment-section-heading {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  margin-bottom: 10px;
+}
+
+#comment-form textarea,
+.comment-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  resize: vertical;
+  margin-bottom: 8px;
+}
+
+.post-full-body {
+  white-space: pre-wrap; /* keeps line breaks the user typed */
+  font-size: 1rem;
+}
+
+.comment-login-notice {
+  background-color: rgba(47, 111, 107, 0.08);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  color: var(--color-ink-soft);
+  margin-bottom: 24px;
+}
+
+.comment-login-notice a {
+  color: var(--color-teal);
+  font-weight: 600;
+}
+
+.comments-heading {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  margin-bottom: 14px;
+}
+
+.comment-thread {
+  list-style: none;
+}
+
+.comment-item {
+  display: flex;
+  gap: 10px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.comment-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.comment-votes-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.comment-vote-btn {
+  font-size: 0.75rem;
+  padding: 2px;
+}
+
+/* Replies get indented under their parent comment, with a visual guide line */
+.comment-replies {
+  list-style: none;
+  margin-top: 10px;
+  padding-left: 18px;
+  border-left: 2px solid var(--color-border);
+}
+
+.comment-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--color-ink-soft);
+}
+
+.comment-meta .username {
+  color: var(--color-ink);
+  font-weight: 500;
+}
+
+.comment-text,
+.comment-body {
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  white-space: pre-wrap;
+}
+
+.comment-actions {
+  margin-top: 2px;
+}
+
+.comment-reply-btn,
+.reply-toggle {
+  background: none;
+  border: none;
+  color: var(--color-teal);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+
+.reply-form {
+  margin-top: 10px;
+  display: none; /* shown via JS when "Reply" is clicked */
+}
+
+.reply-form.open {
+  display: block;
+}
+
+.reply-form textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  resize: vertical;
+  margin-bottom: 6px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--color-ink-soft);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.back-link:hover {
+  color: var(--color-teal);
+}
+
+/* Post owner's Delete button - deliberately reddish so it reads as
+   destructive, distinct from the neutral Save/Archive actions beside it */
+.delete-post-btn {
+  color: #C0392B;
+}
+.delete-post-btn:hover {
+  color: #a83022;
+}
+
+/* Vote buttons: highlight whichever direction the current user picked */
+.vote-btn {
+  transition: color 0.1s ease;
+}
+.vote-btn--active-up {
+  color: var(--color-accent-dark);
+}
+.vote-btn--active-down {
+  color: var(--color-teal);
+}
+
+/* Inline "+ New topic" form that appears under the sidebar button */
+.new-topic-form {
+  display: none;
+  margin-top: 10px;
+  gap: 6px;
+  flex-direction: column;
+}
+.new-topic-form.open {
+  display: flex;
+}
+.new-topic-form input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+}
+.new-topic-error {
+  font-size: 0.78rem;
+  color: #C0392B;
+  display: none;
+}
+
+/* Pagination controls under the feed */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  min-width: 34px;
+  padding: 7px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background-color: var(--color-surface);
+  color: var(--color-ink-soft);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.pagination-btn:hover:not(:disabled) {
+  border-color: var(--color-teal);
+  color: var(--color-teal);
+}
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.pagination-btn--active {
+  background-color: var(--color-teal);
+  border-color: var(--color-teal);
+  color: white;
+}
+
+/* "View more" link at the bottom of the sidebar topic list */
+.view-more-topics-link {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-ink-soft);
+  text-decoration: none;
+  padding: 4px 2px;
+}
+.view-more-topics-link:hover {
+  color: var(--color-teal);
+}
+
+/* Small local preview shown on create-post.html after picking a file, before
+   it's ever uploaded anywhere - kept modest in size so it doesn't blow out
+   the form layout the way the raw image would at full resolution. */
+.media-preview-img {
+  display: block;
+  width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-top: 10px;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+}
+
+/* ============================================
+   12. ICON BUTTONS (save / share / archive / delete)
+   Icons only, no labels - replaces the old emoji+text action buttons.
+============================================ */
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Icon buttons always sit at the far right of their .post-actions row,
+   whether there's a comments link to their left (feed/profile cards) or
+   they're the only thing in the row (post detail page). */
+.post-actions-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  color: var(--color-ink-soft);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+.icon-btn:hover {
+  color: var(--color-teal);
+  background-color: rgba(47, 111, 107, 0.08);
+}
+.icon-btn svg {
+  display: block;
+}
+
+/* Bookmark fills solid (via the SVG's fill attribute) and tints amber once saved */
+.save-icon-btn--active,
+.save-icon-btn--active:hover {
+  color: var(--color-accent-dark);
+}
+
+/* Archive icon tints amber while the post is archived, as a quick "this is
+   in its archived state" signal - same color language as the archived banner */
+.archive-icon-btn--active,
+.archive-icon-btn--active:hover {
+  color: var(--color-accent-dark);
+}
+
+.delete-icon-btn:hover {
+  color: #C0392B;
+  background-color: rgba(192, 57, 43, 0.08);
+}
+
+/* ============================================
+   13. SHARE MODAL
+   Centered popup (link + copy button + post info), same idea as YouTube's
+   share dialog - built and torn down purely in JS, not sitting in the HTML.
+============================================ */
+.share-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 20, 28, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+}
+
+.share-modal {
+  width: 100%;
+  max-width: 420px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 26px;
+  position: relative;
+}
+
+.share-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-ink-soft);
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 4px;
+}
+.share-modal-close:hover {
+  color: var(--color-ink);
+}
+
+.share-modal-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  margin-bottom: 18px;
+  padding-right: 24px;
+}
+
+.share-modal-link-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.share-modal-link-input {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.share-modal-copy-btn {
+  white-space: nowrap;
+}
+
+.share-modal-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+.share-modal-meta strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+/* Floating "Support" button - own-profile only (see profile.js) - pinned to
+   the page's top-right corner, just under the sticky navbar. */
+.support-fab-btn {
+  position: fixed;
+  top: 74px;
+  right: 24px;
+  z-index: 5;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(30, 42, 58, 0.18);
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.08s ease;
+}
+.support-fab-btn:hover {
+  border-color: var(--color-teal);
+  color: var(--color-teal);
+}
+.support-fab-btn:active {
+  transform: scale(0.97);
+}
+
+/* topics.html - full topic list, grouped by starting letter into a 3-column
+   grid (A/D/G... left, B/E/H... center, C/F/I... right). Using grid (not 3
+   separate flex columns) means each ROW auto-sizes to its tallest cell, so
+   e.g. row 2 (D/E/F) always starts at the same height across all 3 columns
+   no matter how many topics are in A, B, or C above it. */
+.topics-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+.topics-letter-heading {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-teal);
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+  border-bottom: 2px solid var(--color-border);
+}
+.topics-letter-topics {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.topics-letter-topics .topic-tag {
+  width: fit-content;
+}
+
+/* ============================================
+   10. RESPONSIVE: stack sidebar above feed on mobile
+============================================ */
+@media (max-width: 720px) {
+  .layout {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    position: static;
+  }
+  .navbar-search {
+    display: none; /* hide search bar on very small screens for now */
+  }
+  .topics-columns {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}

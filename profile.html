@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/x-icon" href="favicon-C.ico" />
+  <title>Profile - Clook</title>
+
+  <script>
+    (function () {
+      var saved = localStorage.getItem("clook-theme");
+      document.documentElement.setAttribute("data-theme", saved === "dark" ? "dark" : "light");
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="navbar-left">
+      <a href="index.html" style="text-decoration:none;">
+        <span class="logo"><span class="logo-accent">C</span>look</span>
+      </a>
+    </div>
+    <div class="navbar-actions">
+      <button type="button" id="theme-toggle" class="btn btn-ghost theme-toggle-btn">Dark</button>
+
+      <div class="navbar-right" id="navbar-right">
+        <a href="login.html" class="btn btn-ghost">Log in</a>
+        <a href="signup.html" class="btn btn-primary">Sign up</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout" style="justify-content: center;">
+    <main class="feed" style="max-width: 700px;">
+
+      <a href="index.html" class="back-link">← Back to feed</a>
+
+      <!-- Username, joined date, post/comment counts - filled in by profile.js -->
+      <div id="profile-header">
+        <p class="feed-loading">Loading profile...</p>
+      </div>
+
+      <h2 class="comments-heading" id="posts-section-heading">Posts</h2>
+
+      <!-- This user's posts get rendered here by profile.js -->
+      <div id="profile-posts">
+        <p class="feed-loading">Loading posts...</p>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Reusable navbar login-state logic (same as every other page) -->
+  <script type="module" src="theme.js"></script>
+  <script type="module" src="main.js"></script>
+  <script type="module" src="profile.js"></script>
+</body>
+</html>

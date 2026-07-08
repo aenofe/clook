@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/x-icon" href="favicon-C.ico" />
+  <title>Create post - Clook</title>
+
+  <script>
+    (function () {
+      var saved = localStorage.getItem("clook-theme");
+      document.documentElement.setAttribute("data-theme", saved === "dark" ? "dark" : "light");
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="navbar-left">
+      <a href="index.html" style="text-decoration:none;">
+        <span class="logo"><span class="logo-accent">C</span>look</span>
+      </a>
+    </div>
+    <div class="navbar-actions">
+      <button type="button" id="theme-toggle" class="btn btn-ghost theme-toggle-btn">Dark</button>
+
+      <div class="navbar-right" id="navbar-right">
+        <a href="login.html" class="btn btn-ghost">Log in</a>
+        <a href="signup.html" class="btn btn-primary">Sign up</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="auth-wrapper">
+    <div class="auth-card" style="max-width: 560px;">
+      <p class="auth-subtitle" style="text-align:left; margin-bottom: 20px;">Create a new post</p>
+
+      <div class="auth-error" id="error-box"></div>
+
+      <form id="post-form">
+        <div class="form-group">
+          <label for="topic">Topic</label>
+          <select id="topic" required>
+            <option value="" disabled selected>Choose a topic...</option>
+            <!-- Options filled in by create-post.js -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input type="text" id="title" placeholder="What's on your mind?" required maxlength="150" />
+        </div>
+
+        <div class="form-group">
+          <label for="body">Body text</label>
+          <textarea id="body" rows="6" placeholder="Say more about it..." required maxlength="5000"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="media">Add an image or video (optional, 25MB max)</label>
+          <input type="file" id="media" accept="image/*,video/*" />
+          <p class="file-hint" id="file-hint"></p>
+          <!-- Shows a small preview once a valid file is picked -->
+          <div id="media-preview"></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="submit-btn">Post it</button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="theme.js"></script>
+  <script type="module" src="main.js"></script>
+  <script type="module" src="create-post.js"></script>
+</body>
+</html>

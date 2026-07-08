@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/x-icon" href="favicon-C.ico" />
+  <title>Post - Clook</title>
+
+  <script>
+    (function () {
+      var saved = localStorage.getItem("clook-theme");
+      document.documentElement.setAttribute("data-theme", saved === "dark" ? "dark" : "light");
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="navbar-left">
+      <a href="index.html" style="text-decoration:none;">
+        <span class="logo"><span class="logo-accent">C</span>look</span>
+      </a>
+    </div>
+    <div class="navbar-actions">
+      <button type="button" id="theme-toggle" class="btn btn-ghost theme-toggle-btn">Dark</button>
+
+      <div class="navbar-right" id="navbar-right">
+        <a href="login.html" class="btn btn-ghost">Log in</a>
+        <a href="signup.html" class="btn btn-primary">Sign up</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout" style="justify-content: center;">
+    <main class="feed" style="max-width: 700px;">
+
+      <a href="index.html" class="back-link">← Back to feed</a>
+
+      <!-- The post itself gets rendered here by post.js -->
+      <div id="post-container">
+        <p class="feed-loading">Loading post...</p>
+      </div>
+
+      <!-- Comment form (only usable if logged in - post.js handles that) -->
+      <div class="comment-form-wrapper">
+        <h3 class="comment-section-heading">Add a comment</h3>
+        <div class="auth-error" id="comment-error"></div>
+        <form id="comment-form">
+          <textarea id="comment-body" rows="3" placeholder="What are your thoughts?" required maxlength="2000"></textarea>
+          <button type="submit" class="btn btn-primary">Comment</button>
+        </form>
+      </div>
+
+      <!-- All comments get rendered here by post.js -->
+      <div id="comments-container">
+        <p class="feed-loading">Loading comments...</p>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Reusable navbar login-state logic (same as index.html) -->
+  <script type="module" src="theme.js"></script>
+  <script type="module" src="main.js"></script>
+  <script type="module" src="post.js"></script>
+</body>
+</html>

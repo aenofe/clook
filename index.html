@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/x-icon" href="favicon-C.ico" />
+  <title>Clook</title>
+
+  <!-- Applies the saved dark/light theme BEFORE anything renders, so there's
+       no flash of the wrong theme. Runs immediately (it's a plain script,
+       not type="module", so it's not deferred like the others below). -->
+  <script>
+    (function () {
+      var saved = localStorage.getItem("clook-theme");
+      document.documentElement.setAttribute("data-theme", saved === "dark" ? "dark" : "light");
+    })();
+  </script>
+
+  <!-- Google Fonts: Space Grotesk (headings), Inter (body), JetBrains Mono (meta info) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="navbar">
+    <div class="navbar-left">
+      <span class="logo"><span class="logo-accent">C</span>look</span>
+    </div>
+
+    <div class="navbar-search">
+      <input type="text" id="search-input" placeholder="Search posts, topics, people..." autocomplete="off" />
+      <div id="search-dropdown" class="search-dropdown"></div>
+    </div>
+
+    <div class="navbar-actions">
+      <button type="button" id="theme-toggle" class="btn btn-ghost theme-toggle-btn">Dark</button>
+
+      <div class="navbar-right" id="navbar-right">
+        <a href="login.html" class="btn btn-ghost">Log in</a>
+        <a href="signup.html" class="btn btn-primary">Sign up</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MAIN LAYOUT: sidebar + feed ===== -->
+  <div class="layout">
+
+    <!-- ---- SIDEBAR: list of topics ---- -->
+    <aside class="sidebar">
+      <h2 class="sidebar-heading">Topics</h2>
+      <ul class="topic-list" id="topic-list">
+        <li><a href="#" class="topic-tag topic-tag--active" data-topic="all">#all</a></li>
+        <!-- Default + user-created topics get appended here by feed.js -->
+      </ul>
+      <button class="btn btn-outline btn-full" id="new-topic-btn" type="button">+ New topic</button>
+
+      <form class="new-topic-form" id="new-topic-form">
+        <input type="text" id="new-topic-input" placeholder="topicname" maxlength="24" autocomplete="off" />
+        <p class="new-topic-error" id="new-topic-error"></p>
+        <button type="submit" class="btn btn-primary btn-full">Add topic</button>
+      </form>
+    </aside>
+
+    <!-- ---- FEED: the posts ---- -->
+    <main class="feed">
+
+      <div class="feed-header">
+        <h1 id="feed-heading">Home feed</h1>
+        <button class="btn btn-primary" onclick="location.href='create-post.html'">+ Create post</button>
+      </div>
+
+      <!-- Real posts get rendered here by feed.js -->
+      <div id="posts-container">
+        <p class="feed-loading">Loading posts...</p>
+      </div>
+
+      <!-- Prev/Next page controls, filled in by feed.js -->
+      <div id="pagination-controls" class="pagination-controls"></div>
+
+    </main>
+  </div>
+
+  <!-- type="module" lets us use import/export syntax in our JS files -->
+  <script type="module" src="theme.js"></script>
+  <script type="module" src="main.js"></script>
+  <script type="module" src="feed.js"></script>
+</body>
+</html>
